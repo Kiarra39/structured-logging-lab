@@ -8,21 +8,21 @@ const pool = new Pool({
   port: process.env.DB_PORT || 5432,
 });
 
-const connectDb = async () => {
-  console.log("connecting...");
+const connectDb = async (log) => {
+  log.info('db.connect.start');
   try {
     await pool.query('SELECT NOW()');
-    console.log("connected");
+    log.info('db.connect.ok');
   } catch (err) {
-    console.log("error");
-    console.log("retry");
+    log.error('db.connect.failed', { error: err.message });
+    log.warn('db.connect.retry');
   }
 };
 
-const queryDb = async (text, params) => {
-  console.log("query...");
+const queryDb = async (text, params, log) => {
+  log.info('db.query.start');
   const res = await pool.query(text, params);
-  console.log("finished");
+  log.info('db.query.ok', { rowCount: res.rowCount });
   return res;
 };
 
